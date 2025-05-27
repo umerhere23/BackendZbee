@@ -6,7 +6,7 @@ const app = express();
 const sequelize = require('./db/db');
 const authRoutes = require('./routes/userauth');
 const blogRoutes = require('./routes/blogs');
-const categoryRoutes = require('./routes/categorie');
+ const projectRoutes = require('./routes/projectRoutes');
 
 app.use(cors());
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
-app.use('/api/categories', categoryRoutes);
+ app.use('/api/projects', projectRoutes);
 
 const PORT = process.env.PORT || 5000;
 
