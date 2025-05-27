@@ -1,6 +1,7 @@
 const Project = require('../models/projects');
 
- exports.getAllProjects = async (req, res) => {
+// Get all projects
+exports.getAllProjects = async (req, res) => {
   try {
     const projects = await Project.findAll();
     res.status(200).json(projects);
@@ -10,7 +11,8 @@ const Project = require('../models/projects');
   }
 };
 
- exports.getProjectById = async (req, res) => {
+// Get a project by ID
+exports.getProjectById = async (req, res) => {
   const { id } = req.params;
   try {
     const project = await Project.findByPk(id);
@@ -23,14 +25,20 @@ const Project = require('../models/projects');
     res.status(500).json({ message: 'Failed to fetch project' });
   }
 };
- exports.createProject = async (req, res) => {
+
+// Create a new project
+exports.createProject = async (req, res) => {
   try {
-    const { title, description, tags, images, projectLink } = req.body;
+    const { title, description, tags, projectLink } = req.body;
+    // Parse tags if sent as JSON string
+    const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
+    // Get image paths from multer
+    const images = req.files ? req.files.map(file => file.path) : [];
 
     const newProject = await Project.create({
       title,
       description,
-      tags,
+      tags: parsedTags,
       images,
       projectLink
     });
@@ -42,7 +50,8 @@ const Project = require('../models/projects');
   }
 };
 
- exports.updateProject = async (req, res) => {
+// Update a project by ID
+exports.updateProject = async (req, res) => {
   const { id } = req.params;
   try {
     const project = await Project.findByPk(id);
@@ -50,12 +59,17 @@ const Project = require('../models/projects');
       return res.status(404).json({ message: 'Project not found' });
     }
 
-    const { title, description, tags, images, projectLink } = req.body;
+    const { title, description, tags, projectLink } = req.body;
+    const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
+    // If new images uploaded, use them; else keep existing
+    const images = req.files && req.files.length > 0
+      ? req.files.map(file => file.path)
+      : project.images;
 
     await project.update({
       title,
       description,
-      tags,
+      tags: parsedTags,
       images,
       projectLink
     });
@@ -67,7 +81,7 @@ const Project = require('../models/projects');
   }
 };
 
- exports.deleteProject = async (req, res) => {
+exports.deleteProject = async (req, res) => {
   const { id } = req.params;
   try {
     const project = await Project.findByPk(id);
