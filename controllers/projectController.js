@@ -1,5 +1,6 @@
 const path = require('path');
 const { Project } = require('../models');
+const { ContactMessage } = require('../models');
 
 const fs = require('fs');
  
@@ -95,5 +96,38 @@ exports.deleteProject = async (req, res) => {
   } catch (error) {
     console.error('Error deleting project:', error);
     res.status(500).json({ message: 'Failed to delete project' });
+  }
+};
+
+exports.createContactMessage = async (req, res) => {
+  try {
+    const { name, email, phone, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, Email, and Message are required.' });
+    }
+
+    const newMessage = await ContactMessage.create({
+      name,
+      email,
+      phone,
+      message
+    });
+
+    res.status(201).json({ message: 'Message sent successfully.', data: newMessage });
+  } catch (error) {
+    console.error('Error saving contact message:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }}
+
+  exports.getAllContactMessages = async (req, res) => {
+  try {
+    const messages = await ContactMessage.findAll({
+      order: [['createdAt', 'DESC']]
+    });
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error('Error fetching contact messages:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
