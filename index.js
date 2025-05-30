@@ -8,6 +8,7 @@ const authRoutes = require('./routes/userauth');
 const blogRoutes = require('./routes/blogs');
  const projectRoutes = require('./routes/projectRoutes');
  const ContactMessageRoutes = require('./routes/leads');
+const testimonialRoutes = require('./routes/testimonialRoutes.js');
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/blogs', blogRoutes);
  app.use('/api/projects', projectRoutes);
  app.use('/api/contact', ContactMessageRoutes);
+app.use('/api/testimonials', testimonialRoutes);
 
 const PORT = process.env.PORT || 5000;
 
